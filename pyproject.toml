@@ -10,6 +10,7 @@ packages = [{include = "src"}]
 python = "^3.10"
 fastapi = "^0.100.0"
 pydantic = "^2.0.3"
+sqlalchemy = "^2.0.19"
 
 
 [build-system]
