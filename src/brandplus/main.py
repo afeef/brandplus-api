@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-app = FastAPI()
+app = FastAPI(title='BrandPlus API')
 
 
 @app.get("/")

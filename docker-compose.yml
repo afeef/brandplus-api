@@ -1,0 +1,28 @@
+version: "3.7"
+services:
+  bp_db:
+    image: postgres:15-bookworm
+    container_name: bp_db
+    volumes:
+      - bp-db-data:/var/lib/postgresql/data/pgdata
+      - ./secrets:/run/secrets
+    env_file:
+      - .env
+
+  bp_api:
+    container_name: bp_api
+    depends_on:
+      - bp_db
+    volumes:
+      - ./secrets:/run/secrets
+    env_file:
+      - .env
+    build:
+      context: ./src/brandplus
+      dockerfile: Dockerfile
+      args:
+        INSTALL_DEV: ${INSTALL_DEV-true}
+
+
+volumes:
+  bp-db-data:
