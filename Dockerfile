@@ -1,6 +1,6 @@
 FROM python:3.10-bookworm
 
-WORKDIR /app
+WORKDIR /usr
 
 RUN pip install --upgrade pip
 
@@ -18,5 +18,6 @@ COPY ./pyproject.toml ./poetry.lock* ./
 ARG INSTALL_DEV=false
 RUN bash -c "if [ $INSTALL_DEV == 'true' ] ; then poetry install --no-root ; else poetry install --no-root --no-dev ; fi"
 
-COPY ./brandplus ./
-ENV PYTHONPATH /app
+COPY ./src ./src
+
+ENV PYTHONPATH /usr
