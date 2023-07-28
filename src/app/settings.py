@@ -1,7 +1,7 @@
 from enum import Enum
 
 from pydantic import Field, ValidationError
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Environment(Enum):
@@ -11,22 +11,21 @@ class Environment(Enum):
 
 
 class BrandPlusSettings(BaseSettings):
-    environment: Environment = Field(env='ENVIRONMENT')
+    environment: Environment
 
 
 class Settings(BrandPlusSettings):
+    sentry_dsn: str
 
-    sentry_dsn: str = Field(env='SENTRY_DSN')
-
-    host: str = Field(env='MONGO_HOST')
-    port: str = Field(env='MONGO_PORT')
-    user: str = Field(env='MONGODB_USER')
-    password: str = Field(env='MONGODB_PASSWORD')
-    database: str = Field(env='MONGODB_DATABASE')
+    mongo_host: str
+    mongo_port: str
+    mongodb_user: str
+    mongodb_password: str
+    mongodb_database: str
 
     @property
     def database_url(self):
-        return f"mongodb://{self.user}:{self.password}@{self.host}:{self.port}/{self.database}"
+        return f"mongodb://{self.mongodb_user}:{self.mongodb_password}@{self.mongo_host}:{self.mongo_port}/{self.mongodb_database}"
 
 
 class ProductionSettings(Settings):
