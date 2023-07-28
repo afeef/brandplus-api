@@ -1,6 +1,6 @@
-FROM python:3.10-bookworm
+FROM --platform=linux/amd64 python:3.10-bookworm
 
-WORKDIR /usr
+WORKDIR /usr/src
 
 RUN pip install --upgrade pip
 
@@ -18,6 +18,10 @@ COPY ./pyproject.toml ./poetry.lock* ./
 ARG INSTALL_DEV=false
 RUN bash -c "if [ $INSTALL_DEV == 'true' ] ; then poetry install --no-root ; else poetry install --no-root --no-dev ; fi"
 
-COPY ./src ./src
+COPY . .
 
-ENV PYTHONPATH /usr
+ENV PYTHONPATH /usr/src
+
+RUN chmod +x ./docker-entrypoint.sh
+
+ENTRYPOINT ["./docker-entrypoint.sh"]
