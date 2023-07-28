@@ -1,10 +1,7 @@
-import os
 from enum import Enum
 
 from pydantic import Field, ValidationError
-from pydantic_settings import BaseSettings, SettingsConfigDict
-from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
+from pydantic_settings import BaseSettings
 
 
 class Environment(Enum):
@@ -13,34 +10,24 @@ class Environment(Enum):
     production = 'production'
 
 
-class PostgresSettings(BaseSettings):
-    host: str = Field(env='POSTGRES_HOST')
-    port: str = Field(env='POSTGRES_PORT')
-    user: str = Field(env='POSTGRES_USER')
-    password: str = Field(env='POSTGRES_PASSWORD')
-    database: str = Field(env='POSTGRES_DATABASE')
+class MongoDBSettings(BaseSettings):
+    host: str = Field(env='MONGO_HOST')
+    port: str = Field(env='MONGO_PORT')
+    user: str = Field(env='MONGODB_USER')
+    password: str = Field(env='MONGODB_PASSWORD')
+    database: str = Field(env='MONGODB_DATABASE')
 
     @property
     def database_url(self):
-        return f"postgres://{self.user}:{self.password}@{self.host}:{self.port}/{self.database}"
-
-    def get_engine(self):
-        assert self.database_url, 'Please set database environment variables correctly!'
-        return create_engine(self.database_url)
-
-    def get_session(self):
-        assert self.database_url, 'Please set database environment variables correctly!'
-        return scoped_session(sessionmaker(bind=create_engine(self.database_url)))
+        return f"mongodb://{self.user}:{self.password}@{self.host}:{self.port}/{self.database}"
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(secrets_dir=os.environ.get('SECRETS_DIR'))
-
-    environment: Environment = None
+    environment: Environment = Field(env='ENVIRONMENT')
 
 
 class BrandPlusSettings(BaseSettings):
-    db: PostgresSettings = PostgresSettings()
+    db: MongoDBSettings = MongoDBSettings()
 
 
 class ProductionSettings(BrandPlusSettings):
