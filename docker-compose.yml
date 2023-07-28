@@ -1,24 +1,34 @@
 version: "3.7"
 services:
-  bp_db:
-    image: postgres:15-bookworm
-    container_name: bp_db
-    volumes:
-      - bp-db-data:/var/lib/postgresql/data/pgdata
-      - ./secrets:/run/secrets
+  mongodb:
+    image: bp_mongodb
+    container_name: bp_mongodb
+    build:
+      context: ./mongodb
+      dockerfile: Dockerfile
     env_file:
-      - .env
+      - .env.secrets
+      - .env.${ENVIRONMENT}
+    volumes:
+      - bp-db-data:/data/db
     ports:
-      - "5432:5432"
+      - "27017:27017"
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh 127.0.0.1:27017/test --quiet
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 40s
+    restart: unless-stopped
 
-  bp_api:
-    container_name: bp_api
+  fastapi:
+    image: bp_fastapi
+    container_name: bp_fastapi
     depends_on:
-      - bp_db
-    volumes:
-      - ./secrets:/run/secrets
+      - mongodb
     env_file:
-      - .env
+      - .env.secrets
+      - .env.${ENVIRONMENT}
     build:
       context: .
       dockerfile: Dockerfile
