@@ -8,6 +8,13 @@ packages = [{include = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
+fastapi = "^0.100.0"
+pydantic = "^2.0.3"
+uvicorn = "^0.23.1"
+pydantic-settings = "^2.0.2"
+pymongo = {extras = ["srv"], version = "^4.4.1"}
+rollbar = "^0.16.3"
+pytest = "^7.4.0"
 
 
 [build-system]
