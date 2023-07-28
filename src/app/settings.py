@@ -10,7 +10,14 @@ class Environment(Enum):
     production = 'production'
 
 
-class MongoDBSettings(BaseSettings):
+class BrandPlusSettings(BaseSettings):
+    environment: Environment = Field(env='ENVIRONMENT')
+
+
+class Settings(BrandPlusSettings):
+
+    sentry_dsn: str = Field(env='SENTRY_DSN')
+
     host: str = Field(env='MONGO_HOST')
     port: str = Field(env='MONGO_PORT')
     user: str = Field(env='MONGODB_USER')
@@ -22,27 +29,19 @@ class MongoDBSettings(BaseSettings):
         return f"mongodb://{self.user}:{self.password}@{self.host}:{self.port}/{self.database}"
 
 
-class Settings(BaseSettings):
-    environment: Environment = Field(env='ENVIRONMENT')
-
-
-class BrandPlusSettings(BaseSettings):
-    db: MongoDBSettings = MongoDBSettings()
-
-
-class ProductionSettings(BrandPlusSettings):
+class ProductionSettings(Settings):
     pass
 
 
-class DevelopmentSettings(BrandPlusSettings):
+class DevelopmentSettings(Settings):
     pass
 
 
-class TestSettings(BrandPlusSettings):
+class TestSettings(Settings):
     pass
 
 
-current_environment = Settings().environment
+current_environment = BrandPlusSettings().environment
 
 if current_environment == Environment.development:
     settings = DevelopmentSettings()
