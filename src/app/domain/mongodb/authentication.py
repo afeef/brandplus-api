@@ -195,7 +195,7 @@ class MongoDBAuthenticationRepository(AuthenticationRepository):
 
     def register_user(self, user: User) -> User:
         self.create_user(user)
-        self.send_confirmation_link(user)
+        # self.send_confirmation_link(user)
         return user
 
     def send_confirmation_link(self, user: User):

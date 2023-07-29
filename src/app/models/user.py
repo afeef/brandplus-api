@@ -53,7 +53,6 @@ class User(VersionedModel):
     role: UserRoleEnum
     verified: bool = Field(default=False, example=True)
     raw_password: Optional[str] = Field(example='Raw User password')
-    subdomain: Optional[str] = Field(default=None, example='lockton')
     email: EmailStr = Field(example='test@ecorrogue.com')
     verified_on: int = Field(default=None)
     password_hash: Optional[str] = Field(default=None)
@@ -74,8 +73,7 @@ class User(VersionedModel):
                 self.email == other.email and \
                 self.password_hash == other.password_hash and \
                 self.verified == other.verified and \
-                self.verified_on == other.verified_on and \
-                self.subdomain == other.subdomain
+                self.verified_on == other.verified_on
         else:
             return False
 
