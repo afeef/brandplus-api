@@ -5,8 +5,9 @@ from typing import Optional, List
 from app.domain import collection_names
 from app.exceptions import AccessTokenInvalidError, RefreshTokenInvalidError
 from app.domain.repositories import AuthenticationRepository
-from app.models import UserRoleEnum, User
-from app.utils.auth_utils import AuthJWT
+from app.models import UserRoleEnum, User, RevokedToken
+from app.utils.auth_utils import AuthJWT, TokenTypeEnum
+from app.utils.email_utils import send_verification_email, send_password_reset_email
 
 
 class MongoDBAuthenticationRepository(AuthenticationRepository):
@@ -136,8 +137,8 @@ class MongoDBAuthenticationRepository(AuthenticationRepository):
             raise Exception('User role is not known')
 
     def refresh(self, user: User, refresh_token: Optional[str] = None):
-        if not refresh_token:
-            refresh_token = g.refresh_token
+        # if not refresh_token:
+        #     refresh_token = g.refresh_token
 
         data = AuthJWT().parse_refresh_token(token=refresh_token)
 
@@ -150,35 +151,35 @@ class MongoDBAuthenticationRepository(AuthenticationRepository):
 
         return self.update_user(user)
 
-    def logout_user(self, user: User):
-        data = AuthJWT().parse_access_token(token=g.access_token)
-        if not data:
-            return
-
-        access_token_jti = data.get('jti')
-        refresh_token_jti = data.get('rt_jti')
-
-        revoked_tokens = [
-            RevokedToken(
-                jti=access_token_jti,
-                token_type=TokenTypeEnum.ACCESS_TOKEN,
-                user_email=data.get('sub'),
-                created_at=int(time.time())
-            ),
-            RevokedToken(
-                jti=refresh_token_jti,
-                token_type=TokenTypeEnum.REFRESH_TOKEN,
-                user_email=data.get('sub'),
-                created_at=int(time.time())
-            )
-        ]
-        for token in revoked_tokens:
-            self.revoke_token(token)
-        try:
-            user.refresh_token_jti.remove(refresh_token_jti)
-            self.update_user(user)
-        except ValueError:
-            pass
+    # def logout_user(self, user: User):
+    #     data = AuthJWT().parse_access_token(token=g.access_token)
+    #     if not data:
+    #         return
+    #
+    #     access_token_jti = data.get('jti')
+    #     refresh_token_jti = data.get('rt_jti')
+    #
+    #     revoked_tokens = [
+    #         RevokedToken(
+    #             jti=access_token_jti,
+    #             token_type=TokenTypeEnum.ACCESS_TOKEN,
+    #             user_email=data.get('sub'),
+    #             created_at=int(time.time())
+    #         ),
+    #         RevokedToken(
+    #             jti=refresh_token_jti,
+    #             token_type=TokenTypeEnum.REFRESH_TOKEN,
+    #             user_email=data.get('sub'),
+    #             created_at=int(time.time())
+    #         )
+    #     ]
+    #     for token in revoked_tokens:
+    #         self.revoke_token(token)
+    #     try:
+    #         user.refresh_token_jti.remove(refresh_token_jti)
+    #         self.update_user(user)
+    #     except ValueError:
+    #         pass
 
     def revoke_all_refresh_tokens(self, user: User):
         for refresh_jti in user.refresh_token_jti:

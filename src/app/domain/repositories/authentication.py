@@ -82,9 +82,9 @@ class AuthenticationRepository(ABC):
     def refresh(self, user: User, refresh_token: Optional[str] = None):
         pass
 
-    @abstractmethod
-    def logout_user(self, user: User):
-        pass
+    # @abstractmethod
+    # def logout_user(self, user: User):
+    #     pass
 
     @abstractmethod
     def register_user(self, user: User) -> User:

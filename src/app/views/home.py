@@ -13,7 +13,7 @@ def health(request: Request, user: User = Depends(deps.get_current_user)):
     return {"message": "Healthy!"}
 
 
-@home_router.get("/db")
-async def db():
-    assert settings.db.database_url
+@home_router.get("/")
+async def db(repo=Depends(settings.get_repo)):
+    assert repo
     return {"message": "database connected"}

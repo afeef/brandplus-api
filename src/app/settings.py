@@ -23,10 +23,18 @@ class Settings(BrandPlusSettings):
     mongodb_password: str
     mongodb_database: str
 
+    secret_key: str
+    security_password_salt: str
     access_token_expire: int
     refresh_token_expire: int
     access_token_secret_key: str
     refresh_token_secret_key: str
+    frontend_url: str
+
+    broker_path: str = None
+    rabbitmq_vhost: str = None
+    rabbitmq_user: str = None
+    rabbitmq_password: str = None
 
     @property
     def database_url(self):
@@ -34,8 +42,7 @@ class Settings(BrandPlusSettings):
 
     def get_repo(self):
         from app.domain.mongodb.repository import MongoDBRepository
-        with MongoDBRepository(mongo_uri=self.database_url, mongo_database=self.mongodb_database) as repo:
-            yield repo
+        return MongoDBRepository(mongo_uri=self.database_url, mongo_database=self.mongodb_database)
 
 
 class ProductionSettings(Settings):
