@@ -9,8 +9,10 @@ packages = [{include = "src"}]
 [tool.poetry.dependencies]
 python = "^3.10"
 fastapi = {extras = ["all"], version = "^0.100.1"}
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 pydantic = "^2.0.3"
 pydantic-settings = "^2.0.2"
+pyjwt = "^2.8.0"
 pymongo = {extras = ["srv"], version = "^4.4.1"}
 pytest = "^7.4.0"
 rollbar = "^0.16.3"

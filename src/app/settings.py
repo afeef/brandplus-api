@@ -23,6 +23,11 @@ class Settings(BrandPlusSettings):
     mongodb_password: str
     mongodb_database: str
 
+    access_token_expire: int
+    refresh_token_expire: int
+    access_token_secret_key: str
+    refresh_token_secret_key: str
+
     @property
     def database_url(self):
         return f"mongodb://{self.mongodb_user}:{self.mongodb_password}@{self.mongo_host}:{self.mongo_port}/{self.mongodb_database}"
