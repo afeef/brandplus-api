@@ -4,7 +4,7 @@ from typing import Optional
 
 from pydantic import BaseModel, Field, validator
 
-from app.domain.exceptions import ClassInstanceMissmatchError
+from app.exceptions import ClassInstanceMissmatchError
 
 
 def get_uuid4_hex():

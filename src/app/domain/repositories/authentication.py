@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Optional, List
 
-from app.models.revoked_token import RevokedToken
-from app.models.user import User, UserRoleEnum
+from app.models import User, UserRoleEnum, RevokedToken
 
 
 class AuthenticationRepository(ABC):

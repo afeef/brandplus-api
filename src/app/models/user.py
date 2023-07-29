@@ -4,10 +4,11 @@ from enum import StrEnum
 from typing import List
 from typing import Optional, Dict
 
+from app.utils.auth_utils import AuthJWT
 from passlib.context import CryptContext
 from pydantic import Field, EmailStr, validator
 
-from app.domain.exceptions import PasswordValidationError
+from app.exceptions import PasswordValidationError
 from app.models.versioned import VersionedModel
 
 ALLOWED_SYMBOLS = '!@#$%&()-_[]{};:"./<>?^*`~\',|=+ '

@@ -1,7 +1,7 @@
 from enum import Enum
 
-from pydantic import Field, ValidationError
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import ValidationError
+from pydantic_settings import BaseSettings
 
 
 class Environment(Enum):
@@ -31,6 +31,11 @@ class Settings(BrandPlusSettings):
     @property
     def database_url(self):
         return f"mongodb://{self.mongodb_user}:{self.mongodb_password}@{self.mongo_host}:{self.mongo_port}/{self.mongodb_database}"
+
+    def get_repo(self):
+        from app.domain.mongodb.repository import MongoDBRepository
+        with MongoDBRepository(mongo_uri=self.database_url, mongo_database=self.mongodb_database) as repo:
+            yield repo
 
 
 class ProductionSettings(Settings):

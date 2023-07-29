@@ -5,7 +5,7 @@ from datetime import datetime
 from typing import Dict, List, Callable
 
 from pymongo import MongoClient, ReturnDocument
-from app.domain.repositories import Repository
+from app.domain.repositories.repository import Repository
 from app.domain.mongodb import __all__ as mongo_classes
 
 
