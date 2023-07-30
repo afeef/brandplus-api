@@ -1,6 +1,7 @@
 from enum import Enum
+from typing import List
 
-from pydantic import Field, ValidationError
+from pydantic import ValidationError
 from pydantic_settings import BaseSettings
 
 
@@ -11,22 +12,41 @@ class Environment(Enum):
 
 
 class BrandPlusSettings(BaseSettings):
-    environment: Environment = Field(env='ENVIRONMENT')
+    environment: Environment
 
 
 class Settings(BrandPlusSettings):
+    sentry_dsn: str
 
-    sentry_dsn: str = Field(env='SENTRY_DSN')
+    mongo_host: str
+    mongo_port: str
+    mongodb_user: str
+    mongodb_password: str
+    mongodb_database: str
 
-    host: str = Field(env='MONGO_HOST')
-    port: str = Field(env='MONGO_PORT')
-    user: str = Field(env='MONGODB_USER')
-    password: str = Field(env='MONGODB_PASSWORD')
-    database: str = Field(env='MONGODB_DATABASE')
+    secret_key: str
+    security_password_salt: str
+    access_token_expire: int
+    refresh_token_expire: int
+    access_token_secret_key: str
+    refresh_token_secret_key: str
+    frontend_url: str
+
+    broker_path: str = None
+    rabbitmq_vhost: str = None
+    rabbitmq_user: str = None
+    rabbitmq_password: str = None
+
+    system_admin_email_list: str
+    system_admin_default_password: str
 
     @property
     def database_url(self):
-        return f"mongodb://{self.user}:{self.password}@{self.host}:{self.port}/{self.database}"
+        return f"mongodb://{self.mongodb_user}:{self.mongodb_password}@{self.mongo_host}:{self.mongo_port}/{self.mongodb_database}"
+
+    def get_repo(self):
+        from app.domain.mongodb.repository import MongoDBRepository
+        return MongoDBRepository(mongo_uri=self.database_url, mongo_database=self.mongodb_database)
 
 
 class ProductionSettings(Settings):

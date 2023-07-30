@@ -1,4 +1,5 @@
 import sentry_sdk
+from app.views import home_router, auth_router
 from fastapi import FastAPI
 
 from app.settings import settings
@@ -9,13 +10,6 @@ sentry_sdk.init(
 )
 app = FastAPI(title='BrandPlus API')
 
+home_router.include_router(auth_router)
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
-
-
-@app.get("/db")
-async def db():
-    assert settings.db.database_url
-    return {"message": "database connected"}
+app.include_router(home_router)
