@@ -2,14 +2,14 @@ import time
 
 from app.models import User, UserRoleEnum
 from app.settings import settings
-from app.views import schemas
-from fastapi import APIRouter, Request, status, HTTPException, Depends
+from app.views.models import CreateUserSchema
+from fastapi import APIRouter, status, HTTPException, Depends
 
 auth_router = APIRouter(prefix=f'/authentication', tags=["authentication"])
 
 
 @auth_router.post('/register', status_code=status.HTTP_201_CREATED)
-async def create_user(payload: schemas.CreateUserSchema, repo=Depends(settings.get_repo)):
+async def create_user(payload: CreateUserSchema, repo=Depends(settings.get_repo)):
     user = repo.get_user_by_email(email=payload.email.lower())
     if user:
         raise HTTPException(
