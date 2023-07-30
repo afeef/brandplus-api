@@ -52,9 +52,9 @@ class User(VersionedModel):
     last_name: str = Field(example="Zoro")
     role: UserRoleEnum
     verified: bool = Field(default=False, example=True)
-    raw_password: Optional[str] = Field(example='Raw User password')
+    raw_password: Optional[str] = Field(example='Raw User password', default=None)
     email: EmailStr = Field(example='test@ecorrogue.com')
-    verified_on: int = Field(default=None)
+    verified_on: Optional[int] = Field(default=0)
     password_hash: Optional[str] = Field(default=None)
     access_token: Optional[str] = None
     refresh_token: Optional[str] = None

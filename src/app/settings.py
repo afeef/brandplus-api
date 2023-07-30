@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import List
 
 from pydantic import ValidationError
 from pydantic_settings import BaseSettings
@@ -35,6 +36,9 @@ class Settings(BrandPlusSettings):
     rabbitmq_vhost: str = None
     rabbitmq_user: str = None
     rabbitmq_password: str = None
+
+    system_admin_email_list: str
+    system_admin_default_password: str
 
     @property
     def database_url(self):

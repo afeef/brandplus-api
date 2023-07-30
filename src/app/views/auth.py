@@ -1,3 +1,5 @@
+import time
+
 from app.models import User, UserRoleEnum
 from app.settings import settings
 from app.views import schemas
@@ -14,7 +16,7 @@ async def create_user(payload: schemas.CreateUserSchema, repo=Depends(settings.g
             status_code=status.HTTP_409_CONFLICT, detail='Account already exist'
         )
 
-    if payload.password != payload.passwordConfirm:
+    if payload.password != payload.password_confirm:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail='Passwords do not match')
 
@@ -24,7 +26,8 @@ async def create_user(payload: schemas.CreateUserSchema, repo=Depends(settings.g
         last_name=payload.last_name,
         raw_password=payload.password,
         role=UserRoleEnum.CLIENT,
-        force_password_reset=True
+        verified_on=int(time.time()),
+        force_password_reset=payload.verified
     )
 
     user.changed_by_id = user.entity_id
