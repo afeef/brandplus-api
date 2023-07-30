@@ -50,15 +50,15 @@ async def login_user(payload: LoginUserSchema, repo=Depends(settings.get_repo)):
 
     if not user:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="User with email not found."
+            status_code=status.HTTP_400_BAD_REQUEST, detail='Incorrect Email or Password'
         )
 
-    if verify_password(password=payload.password, hashed_password=user.password_hash):
-        user.changed_by_id = user.entity_id
-        response = dict(success=True, message="Login successful!", user=repo.login(user))
+    if not verify_password(password=payload.password, hashed_password=user.password_hash):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail='Incorrect Email or Password'
+        )
 
-        return response
+    user.changed_by_id = user.entity_id
+    response = dict(success=True, message="Login successful!", user=repo.login(user))
 
-    raise HTTPException(
-        status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid password"
-    )
+    return response
