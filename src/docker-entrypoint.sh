@@ -1,7 +1,7 @@
 #!/bin/bash
 
-python indexes.py
-python seed.py
-python version.py
+python app/indexes.py
+python app/seed.py
+python app/version.py
 
 uvicorn app.main:app --host 0.0.0.0 --port $PORT
