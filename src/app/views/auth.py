@@ -2,7 +2,8 @@ import time
 
 from app.models import User, UserRoleEnum
 from app.settings import settings
-from app.views.models import CreateUserSchema
+from app.utils.auth_utils import verify_password
+from app.views.models import CreateUserSchema, LoginUserSchema
 from fastapi import APIRouter, status, HTTPException, Depends
 
 auth_router = APIRouter(prefix=f'/authentication', tags=["authentication"])
@@ -41,3 +42,23 @@ async def create_user(payload: CreateUserSchema, repo=Depends(settings.get_repo)
     )
 
     return response
+
+
+@auth_router.post('/login', status_code=status.HTTP_200_OK)
+async def login_user(payload: LoginUserSchema, repo=Depends(settings.get_repo)):
+    user = repo.get_user_by_email(email=payload.email.lower())
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="User with email not found."
+        )
+
+    if verify_password(password=payload.password, hashed_password=user.password_hash):
+        user.changed_by_id = user.entity_id
+        response = dict(success=True, message="Login successful!", user=repo.login(user))
+
+        return response
+
+    raise HTTPException(
+        status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid password"
+    )

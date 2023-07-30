@@ -4,24 +4,13 @@ from enum import StrEnum
 from typing import List
 from typing import Optional, Dict
 
-from app.utils.auth_utils import AuthJWT
-from passlib.context import CryptContext
+from app.utils.auth_utils import AuthJWT, hash_password, verify_password
 from pydantic import Field, EmailStr, validator
 
 from app.exceptions import PasswordValidationError
 from app.models.versioned import VersionedModel
 
 ALLOWED_SYMBOLS = '!@#$%&()-_[]{};:"./<>?^*`~\',|=+ '
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-
-def has_password(password: str):
-    return pwd_context.hash(password)
-
-
-def verify_password(password: str, hashed_password: str):
-    return pwd_context.verify(password, hashed_password)
 
 
 class PasswordCharacterWhitelist:
@@ -63,7 +52,7 @@ class User(VersionedModel):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.password_hash = has_password(self.raw_password) if \
+        self.password_hash = hash_password(self.raw_password) if \
             self.raw_password else self.password_hash
 
     def __eq__(self, other) -> bool:
