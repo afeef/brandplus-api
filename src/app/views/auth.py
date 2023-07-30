@@ -32,12 +32,12 @@ async def create_user(payload: schemas.CreateUserSchema, repo=Depends(settings.g
 
     user.changed_by_id = user.entity_id
     user = repo.register_user(user=user)
+    user = repo.login(user)
 
     response = dict(
         success=True,
         message="User successfully created and a confirmation email has been sent via email.",
         user=user
-        # user=repo.login(user)
     )
 
     return response
