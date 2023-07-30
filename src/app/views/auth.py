@@ -8,7 +8,7 @@ from fastapi import APIRouter, Request, status, HTTPException, Depends
 auth_router = APIRouter(prefix=f'/authentication', tags=["authentication"])
 
 
-@auth_router.post('/register', status_code=status.HTTP_201_CREATED, response_model=schemas.UserResponse)
+@auth_router.post('/register', status_code=status.HTTP_201_CREATED)
 async def create_user(payload: schemas.CreateUserSchema, repo=Depends(settings.get_repo)):
     user = repo.get_user_by_email(email=payload.email.lower())
     if user:
@@ -36,7 +36,8 @@ async def create_user(payload: schemas.CreateUserSchema, repo=Depends(settings.g
     response = dict(
         success=True,
         message="User successfully created and a confirmation email has been sent via email.",
-        user=repo.login(user)
+        user=user
+        # user=repo.login(user)
     )
 
     return response
