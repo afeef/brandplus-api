@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 python:3.11-bookworm
+FROM python:3.11-bookworm
 
 WORKDIR /usr/src
 

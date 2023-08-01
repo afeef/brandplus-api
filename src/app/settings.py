@@ -23,6 +23,7 @@ class Settings(BrandPlusSettings):
     mongodb_user: str
     mongodb_password: str
     mongodb_database: str
+    database_url: str
 
     secret_key: str
     security_password_salt: str
@@ -39,10 +40,6 @@ class Settings(BrandPlusSettings):
 
     system_admin_email_list: str
     system_admin_default_password: str
-
-    @property
-    def database_url(self):
-        return f"mongodb://{self.mongodb_user}:{self.mongodb_password}@{self.mongo_host}:{self.mongo_port}/{self.mongodb_database}"
 
     def get_repo(self):
         from app.domain.mongodb.repository import MongoDBRepository
