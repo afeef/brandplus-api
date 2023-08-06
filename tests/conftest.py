@@ -2,8 +2,9 @@ import pytest
 from starlette.testclient import TestClient
 
 from app.main import app
+from app.models import User
 from app.settings import settings
-from fakes import fake_credentials
+from fakes import fake_credentials, fake_user
 
 
 @pytest.fixture(scope='session')
@@ -27,6 +28,18 @@ def auth_client(client):
     })
 
     return test_client
+
+
+@pytest.fixture(scope='session')
+def user(client):
+    payload = fake_user()
+    response = client.post(url='/authentication/signup', json=payload.model_dump())
+    assert response.status_code == 201
+
+    data = response.json()
+    assert 'user' in data
+
+    yield User(**data.get('user'))
 
 
 @pytest.fixture(scope='session')
