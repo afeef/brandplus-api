@@ -1,5 +1,4 @@
 from enum import Enum
-from typing import List
 
 from pydantic import ValidationError
 from pydantic_settings import BaseSettings

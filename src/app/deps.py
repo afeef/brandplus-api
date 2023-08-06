@@ -1,26 +1,14 @@
-from typing import Optional
-
-import jwt
-
 from app.logger import logger
 from app.models import User
 from app.settings import settings
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from pydantic import BaseModel
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/verify-otp", auto_error=False)
-oauth2_scheme_ums = OAuth2PasswordBearer(tokenUrl="/auth/register", auto_error=False)
-
-
-class TokenData(BaseModel):
-    user_id: Optional[int]
-    email: Optional[str]
-    is_signup_complete: Optional[bool]
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/authentication/token", auto_error=False)
 
 
 def get_current_user(
-        db=Depends(settings.get_repo), token: str = Depends(oauth2_scheme)
+        repo=Depends(settings.get_repo), token: str = Depends(oauth2_scheme)
 ) -> User:
     logger.info(token)
 
@@ -33,14 +21,36 @@ def get_current_user(
     try:
         if not token:
             raise credentials_exception
-        payload = {}  # decode_auth_token(auth_token=token)
-        logger.info(payload)
 
-        token_data = TokenData(**payload)
+        auth_token = token.replace('Bearer ', '')
+        user = repo.validate_access_token(token=auth_token)
 
-    except jwt.InvalidTokenError as e:
+        if not user:
+            raise credentials_exception
+        return user
+    except Exception as e:
         raise credentials_exception from e
-    user = db.query(User).filter(User.id == token_data.user_id).first()
-    if user is None:
-        raise credentials_exception
-    return user
+
+
+def get_current_user_from_refresh_token(
+        repo=Depends(settings.get_repo), token: str = Depends(oauth2_scheme)
+) -> str:
+    logger.info(token)
+
+    token_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Refresh token is invalid",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+
+    try:
+        token = token.replace('Bearer', '')
+        user = repo.validate_refresh_token(refresh_token=token)
+
+        if not user:
+            raise token_exception
+
+        return user
+
+    except Exception as e:
+        raise token_exception from e
