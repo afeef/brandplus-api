@@ -41,7 +41,7 @@ class VersionedModel(BaseModel):
         raise NotImplementedError
 
     def dict(self, *args):
-        return super().dict(exclude={'_id'})
+        return super().model_dump(exclude={'_id'})
 
     def as_dict(self):
         return self.dict()
