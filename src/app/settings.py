@@ -32,11 +32,6 @@ class Settings(BrandPlusSettings):
     refresh_token_secret_key: str
     frontend_url: str
 
-    broker_path: str = None
-    rabbitmq_vhost: str = None
-    rabbitmq_user: str = None
-    rabbitmq_password: str = None
-
     system_admin_email_list: str
     system_admin_default_password: str
 
@@ -54,7 +49,7 @@ class DevelopmentSettings(Settings):
 
 
 class TestSettings(Settings):
-    pass
+    tests_prefix: str
 
 
 current_environment = BrandPlusSettings().environment

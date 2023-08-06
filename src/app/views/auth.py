@@ -13,7 +13,7 @@ from fastapi import APIRouter, status, HTTPException, Depends
 auth_router = APIRouter(prefix=f'/authentication', tags=["authentication"])
 
 
-@auth_router.post('/register', status_code=status.HTTP_201_CREATED)
+@auth_router.post('/signup', status_code=status.HTTP_201_CREATED)
 async def create_user(payload: CreateUserSchema, repo=Depends(settings.get_repo)):
     user = repo.get_user_by_email(email=payload.email.lower())
     if user:
@@ -48,7 +48,7 @@ async def create_user(payload: CreateUserSchema, repo=Depends(settings.get_repo)
     return response
 
 
-@auth_router.post('/login', status_code=status.HTTP_200_OK)
+@auth_router.post('/signin', status_code=status.HTTP_200_OK)
 async def login_user(payload: LoginUserSchema, repo=Depends(settings.get_repo)):
     user = repo.get_user_by_email(email=payload.email.lower())
 
@@ -130,7 +130,7 @@ async def refresh_token(
     return dict(success=True, user=user.get_for_api())
 
 
-@auth_router.post('/logout')
+@auth_router.post('/signout')
 async def logout(user=Depends(get_current_user), repo=Depends(settings.get_repo)):
     repo.logout_user(user)
 
