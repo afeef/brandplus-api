@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Optional
 
 from pydantic import Field, Extra
 
@@ -13,6 +13,7 @@ class Organization(VersionedModel, extra=Extra.allow):
     state: Any = Field(example='NY', default=None)
     zipcode: Any = Field(example='10001', default=None)
     websites: Any = []
+    shipping_method: Optional[str] = Field(default=None, example='standard')
 
     def __eq__(self, other):
         if isinstance(other, Organization):
